@@ -134,7 +134,6 @@ class Aplicacion:
             return
 
         if Autenticador.validar_credenciales(usuario, contrasena):
-            self.ventana.destroy()
             iniciar_sesion()
         else:
             self.etiqueta_error.config(text="Datos incorrectos.")
@@ -164,6 +163,8 @@ class Autenticador:
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo leer archivo de usuarios: {e}")
         return False
+    
+# Función para iniciar sesión, que llama a la interfaz 
 def iniciar_sesion():
     print("Iniciando sesión...")
     
