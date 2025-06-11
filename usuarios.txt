@@ -1,0 +1,6 @@
+formato usuario,contraseña,id_dispositivo
+jason,dos,8988
+manuel,dos,9056
+Saymond,1245,7070
+marco,marco,789,Marco Cordero Anderson,Tres Ríos,2,789;896
+
