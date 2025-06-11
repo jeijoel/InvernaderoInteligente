@@ -134,8 +134,8 @@ class Aplicacion:
             return
 
         if Autenticador.validar_credenciales(usuario, contrasena):
-            messagebox.showinfo("Bienvenido", "Login correcto.")
-            # Aquí podrías mostrar otra pantalla como 'dashboard'
+            self.ventana.destroy()
+            iniciar_sesion()
         else:
             self.etiqueta_error.config(text="Datos incorrectos.")
             
@@ -164,7 +164,9 @@ class Autenticador:
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo leer archivo de usuarios: {e}")
         return False
-
+def iniciar_sesion():
+    print("Iniciando sesión...")
+    
 def main():
     root = tk.Tk()
     app = Aplicacion(root)
