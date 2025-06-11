@@ -8,7 +8,7 @@ class App(tk.Tk):
         self.geometry("300x150")
 
         # Crear instancia de SerialControl con el puerto
-        self.serial_control = Control('COM3')  #--------------------> OJO! Esto es necesario para enviar el objeto con el puerto para que lo abra, si no no hace lecturas, tienen que dejarlo
+        self.serial_control = Control('COM5')  #--------------------> OJO! Esto es necesario para enviar el objeto con el puerto para que lo abra, si no no hace lecturas, tienen que dejarlo
 
 
 

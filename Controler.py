@@ -30,74 +30,90 @@ class Control:
         with open(file_path, 'a', encoding='utf-8') as f:
             f.write(json.dumps(data_dict) + "\n")
 
+    def limpiar_buffer(self):
+        while self.ser.in_waiting > 0:
+            self.ser.readline()
 
     ### lee los datos ######################################################################################
+
     def leer_datos(self):
+        contadorbuffer = 0
+        Datalist = []
         print(f"Iniciando comunicador conectando a {self.ser.port}...")
         try:
             while self.running:
                 config = Configuracion()
                 intervalo = config.obtener_intervalo_medicion() ##----> Aqui es donde se define el intervalo, en la interfaz se debe hacer un boton que escriba en el JSON (config.json) 
-
-                if self.ser.in_waiting > 0:
+                
+                while self.ser.in_waiting > 0:
                     line = self.ser.readline().decode('utf-8').strip()
 
                     if line:
+                        contadorbuffer += 1
+                        Datalist.append(line)
                         print(f"Recibido: {line}")
-                        try:
-                            parts = line.split(",")
-                            data_type = parts[0]
+                        if contadorbuffer == 4:
+                            for linea in Datalist:
+                                try:
+                                    parts = linea.split(",")
+                                    data_type = parts[0]
 
-## DHT
-                            if data_type == "DHT_DATA":
-                                data_dict = {
-                                    "type": data_type,
-                                    "timestamp": parts[1],
-                                    "sensor_name": parts[2],
-                                    "temperatura_c": parts[3].split(":")[1]
+        ## DHT
+                                    if data_type == "DHT_DATA":
+                                        data_dict = {
+                                            "type": data_type,
+                                            "timestamp": parts[1],
+                                            "sensor_name": parts[2],
+                                            "temperatura_c": parts[3].split(":")[1]
+                                            
+                                        }
+                                        
+        ## Humedad
+                                        self.write_to_json_line(data_dict, self.DHT_TEMP_JSON_FILE)
+
+                                    elif data_type == "SOIL_MOISTURE_DATA":
+                                        data_dict = {
+                                            "type": data_type,
+                                            "timestamp": parts[1],
+                                            "sensor_name": parts[2],
+                                            "estado_suelo": parts[3].split(":")[1]
+                                        }
+                                        self.write_to_json_line(data_dict, self.SOIL_MOISTURE_JSON_FILE)
+        ## nivel de agua
+                                    elif data_type == "WATER_LEVEL_DATA":
+                                        distancia_cm = float(parts[3].split(":")[1])
+                                        nivel_agua = parts[4].split(":")[1]
+
+                                        data_dict = {
+                                            "type": data_type,
+                                            "timestamp": parts[1],
+                                            "sensor_name": parts[2],
+                                            "distancia_cm": distancia_cm,
+                                            "nivel_agua": nivel_agua
+                                        }
+                                        self.write_to_json_line(data_dict, self.WATER_LEVEL_JSON_FILE)
                                     
-                                }
-                                
-## Humedad
-                                self.write_to_json_line(data_dict, self.DHT_TEMP_JSON_FILE)
+                                        ###################### ERRORES #######################333
 
-                            elif data_type == "SOIL_MOISTURE_DATA":
-                                data_dict = {
-                                    "type": data_type,
-                                    "timestamp": parts[1],
-                                    "sensor_name": parts[2],
-                                    "estado_suelo": parts[3].split(":")[1]
-                                }
-                                self.write_to_json_line(data_dict, self.SOIL_MOISTURE_JSON_FILE)
-## nivel de agua
-                            elif data_type == "WATER_LEVEL_DATA":
-                                distancia_cm = float(parts[3].split(":")[1])
-                                nivel_agua = parts[4].split(":")[1]
+                                    elif data_type in ["ERROR", "PICO_ERROR"]:
+                                        with open(self.ERROR_LOG_FILE, 'a', encoding='utf-8') as f_err:
+                                            f_err.write(line + "\n")
+                                    else:
+                                        print(f"Tipo de dato desconocido: {data_type} en línea: {line}")
 
-                                data_dict = {
-                                    "type": data_type,
-                                    "timestamp": parts[1],
-                                    "sensor_name": parts[2],
-                                    "distancia_cm": distancia_cm,
-                                    "nivel_agua": nivel_agua
-                                }
-                                self.write_to_json_line(data_dict, self.WATER_LEVEL_JSON_FILE)
+                            
 
+                                except Exception as e:
+                                    print(f"Error al procesar línea: {line} - Error: {e}")
 
-                                ###################### ERRORES #######################333
-
-                            elif data_type in ["ERROR", "PICO_ERROR"]:
-                                with open(self.ERROR_LOG_FILE, 'a', encoding='utf-8') as f_err:
-                                    f_err.write(line + "\n")
-                            else:
-                                print(f"Tipo de dato desconocido: {data_type} en línea: {line}")
-
+                
+                            print(contadorbuffer)
+                            contadorbuffer = 0
+                            Datalist.clear()
+                            self.limpiar_buffer()
                             time.sleep(intervalo) #-------------> Ese es el intervalo
 
-                        except Exception as e:
-                            print(f"Error al procesar línea: {line} - Error: {e}")
-
-                time.sleep(0.05)
+                
         except Exception as e:
             print(f"\nError en hilo de lectura: {e}")
 
