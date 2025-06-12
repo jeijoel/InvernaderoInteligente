@@ -3,6 +3,9 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import webbrowser
 
+from Aplicacion import ventana_principal
+
+
 class Aplicacion:
     def __init__(self, root):
         self.root = root
@@ -167,6 +170,8 @@ class Autenticador:
 # Función para iniciar sesión, que llama a la interfaz 
 def iniciar_sesion():
     print("Iniciando sesión...")
+    ventana_principal()
+
     
 def main():
     root = tk.Tk()
