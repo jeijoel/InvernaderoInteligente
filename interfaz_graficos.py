@@ -8,6 +8,7 @@ import json
 import matplotlib.dates as mdates
 
 class InterfazGraficas:
+    #Holi
     def __init__(self, maestro, ruta_carpeta):
         self.ventana = tk.Toplevel(maestro)
         self.ventana.title("Gráficos de Sensores")
