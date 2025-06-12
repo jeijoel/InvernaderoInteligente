@@ -23,10 +23,10 @@ class SensorData:
 
 # instancias
 # sensor = SensorData("datos_sensores_json_separados", "nivel_agua.json")
-# sensor2 = SensorData("datos_sensores_json_separados", "humedad_suelo.json")
-# sensor3 = SensorData("datos_sensores_json_separados", "temperatura_dht.json")
-# datodelsensor = sensor2.read_line()
-# print(datodelsensor)
+sensor2 = SensorData("datos_sensores_json_separados", "humedad_suelo.json")
+sensor3 = SensorData("datos_sensores_json_separados", "temperatura_dht.json")
+datodelsensor = sensor3.read_line()
+print(datodelsensor)
 
 
 

@@ -108,8 +108,8 @@ class Aplicacion:
                 with open("usuarios.txt", "a+", encoding="utf-8") as archivo:
                     archivo.seek(0)
                     if archivo.read() and not archivo.read().endswith("\n"):
-                        archivo.write("\n")
-                    archivo.write(f"{datos['usuario']},{datos['contrasena']},{datos['id_disp']},{datos['nombre']},{datos['ubicacion']},{datos['num_dispositivos']},{datos['series']}\n")
+                        #archivo.write("\n")
+                        archivo.write(f"{datos['usuario']},{datos['contrasena']},{datos['id_disp']},{datos['nombre']},{datos['ubicacion']},{datos['num_dispositivos']},{datos['series']}\n")
                 messagebox.showinfo("Registro exitoso", "Usuario registrado correctamente.")
                 self.mostrar_pantalla("login")
             except Exception as e:

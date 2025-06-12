@@ -4,3 +4,4 @@ manuel,dos,9056
 Saymond,1245,7070
 marco,marco,789,Marco Cordero Anderson,Tres Ríos,2,789;896
 nat,kyara,8988,Natalia Gomez Segura,Cartago,1,8988
+SEBAS,123,KJ,RPTIAPER,IORTIO,OJOJ,JOIJ
