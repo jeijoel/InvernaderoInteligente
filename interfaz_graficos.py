@@ -198,4 +198,21 @@ class InterfazGraficas:
         etiqueta_info.pack(pady=2)
 
 
+#Interfaz temporal para pruebas 
+#hay que agregar boton a la ventana principal para abrir esta interfaz
+if __name__ == "__main__":
+    import tkinter as tk
+    root = tk.Tk()
+    root.title("Simulación Celular - Prueba Directa")
+    root.geometry("400x300")
 
+    def abrir_interfaz():
+        from os import path
+        carpeta = "datos_sensores_json_separados"
+        if not path.exists(carpeta):
+            print(f"[ERROR] La carpeta '{carpeta}' no existe.")
+        else:
+            InterfazGraficas(root, carpeta)
+
+    tk.Button(root, text="Abrir Interfaz de Gráficas", command=abrir_interfaz, font=("Arial", 12)).pack(pady=20)
+    root.mainloop()
