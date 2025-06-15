@@ -4,6 +4,111 @@ import time
 import json
 import os
 from Config import Configuracion
+import socket 
+
+
+
+# Esta clase gestiona la conexión TCP con la Raspberry Pi Pico W
+class PicoTCPClient:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.sock = None
+        self.is_connected = False
+        print(f"Cliente TCP inicializado para {self.host}:{self.port}")
+
+    def connect(self):
+        if self.is_connected and self.sock:
+            # print("Ya conectado al Pico W.") # Puedes descomentar para depurar
+            return True
+        try:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.settimeout(5) # Establece un timeout de 5 segundos para la conexión y lectura
+            self.sock.connect((self.host, self.port))
+            self.is_connected = True
+            print(f"Conectado exitosamente a {self.host}:{self.port}")
+            return True
+        
+
+
+#########Errores#####
+        except socket.timeout:
+            print("Error: Tiempo de espera agotado al intentar conectar TCP.")
+            self.is_connected = False
+            self.sock = None
+            return False
+        except ConnectionRefusedError:
+            print("Error: Conexión TCP rechazada. Asegúrate de que la Pico W esté encendida y el script TCP esté corriendo.")
+            self.is_connected = False
+            self.sock = None
+            return False
+        except Exception as e:
+            print(f"Error general al conectar TCP con el Pico W: {e}")
+            self.is_connected = False
+            self.sock = None
+            return False
+
+    def send_command(self, command):
+        if not self.is_connected or not self.sock:
+            print("No conectado al Pico W para enviar comando TCP. Intentando reconectar...")
+            if not self.connect():
+                return None 
+
+        try:
+            # Los comandos deben terminar con '\n' y ser bytes
+            self.sock.sendall(f"{command}\n".encode('utf-8'))
+            print("Enviado")
+        
+
+
+        #####Errores#####
+        except socket.timeout:
+            print("Error: Tiempo de espera agotado al enviar/recibir comando TCP. Conexión perdida.")
+            self.is_connected = False # Considerar la conexión perdida
+            if self.sock: self.sock.close()
+            self.sock = None
+            return None
+        except Exception as e:
+            print(f"Error al enviar comando o recibir respuesta TCP: {e}. Conexión perdida.")
+            self.is_connected = False # Considerar la conexión perdida
+            if self.sock:
+                self.sock.close()
+            self.sock = None
+            return None
+        
+
+
+    def send_command_interval(self, intervalo, objeto):
+
+        def ciclo_objeto():
+            comando_on = f"{objeto.upper()}_ON"
+            comando_off = f"{objeto.upper()}_OFF"
+
+            while True:
+                resp_on = PicoTCPClient.send_command(comando_on)
+                print(f"{objeto} ON → {resp_on}")
+                time.sleep(intervalo)
+
+                resp_off = PicoTCPClient.send_command(comando_off)
+                print(f"{objeto} OFF → {resp_off}")
+                time.sleep(intervalo)
+
+        hilo = threading.Thread(target=ciclo_objeto)
+        hilo.start()
+
+
+###Cierre de conexion
+    def disconnect(self):
+        if self.sock and self.is_connected:
+            try:
+                self.sock.close()
+                self.is_connected = False
+                print("Desconectado del Pico W (TCP).")
+            except Exception as e:
+                print(f"Error al desconectar TCP: {e}")
+
+
+
 
 
 
@@ -18,10 +123,13 @@ class Control:
         self.DHT_TEMP_JSON_FILE = os.path.join(self.LOG_DIR, "temperatura_dht.json")
         self.SOIL_MOISTURE_JSON_FILE = os.path.join(self.LOG_DIR, "humedad_suelo.json")
         self.WATER_LEVEL_JSON_FILE = os.path.join(self.LOG_DIR, "nivel_agua.json")
+        self.FOTOCELDA_FILE = os.path.join(self.LOG_DIR, "fotocelda.json")
         self.ERROR_LOG_FILE = os.path.join(self.LOG_DIR, "errores_sistema.log")
 
         self.thread = threading.Thread(target=self.leer_datos, daemon=True)
         self.thread.start()
+
+    
 
     #### Escribir en Json ################################################################################
 
@@ -92,6 +200,15 @@ class Control:
                                             "nivel_agua": nivel_agua
                                         }
                                         self.write_to_json_line(data_dict, self.WATER_LEVEL_JSON_FILE)
+            ####Fotocelda
+                                    elif data_type == "Fotocelda_Sensor":
+
+                                        data_dict = {
+                                            "type": data_type,
+                                            "timestamp": parts[1],
+                                            "iluminacion": parts[3].split(":")[1]
+                                        }
+                                        self.write_to_json_line(data_dict, self.FOTOCELDA_FILE)
                                     
                                         ###################### ERRORES #######################333
 
@@ -118,21 +235,7 @@ class Control:
             print(f"\nError en hilo de lectura: {e}")
 
 
-
-
-            ####################################   Enviar datos    ######################3333
-
-    def enviar_comando(self, comando):  #-----> desde la GUI se llama a la clase de arriba con este metodo y le deben dar el comando para que esta funcion se lo env'ie a la raspi
-        if self.ser.is_open:
-            try:
-                self.ser.write(f"{comando}\n".encode('utf-8'))
-                print(f"Comando enviado: {comando}")
-
-                #Errores
-            except Exception as e:
-                print(f"Error al enviar comando: {e}")
-        else:
-            print("Puerto serial no disponible.")
+   
 
 #def que cierra el puerto
     def cerrar(self):

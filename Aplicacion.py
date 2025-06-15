@@ -23,7 +23,7 @@ def ventana_principal():
 
     # Cálculos del canvas
     ancho_lienzo_principal = 486
-    largo_lienzo_principal = 1080
+    largo_lienzo_principal = 920
 
     # Coordenadas para centrar el canvas
     canvas_x = (ancho_pantalla - ancho_lienzo_principal) // 2
@@ -158,8 +158,10 @@ def ventana_principal():
     boton_soporte.place(x=415, y=880)
 
     boton_salir = Button(lienzo_principal, text='Cerrar', activebackground="#FFFFFF", activeforeground="#000000",fg="#FFFFFF", bg="#000000", cursor="ur_angle", relief=FLAT, overrelief=RAISED,command=Destruir_ventana_principal)
-    boton_salir.place(x=203, y=915)
+    boton_salir.place(x=203, y=715)
 
     ventana_principal.protocol("WM_DELETE_WINDOW", desabilitado)
 
     ventana_principal.mainloop()
+
+ventana_principal()
