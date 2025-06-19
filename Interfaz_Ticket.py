@@ -190,6 +190,10 @@ entry_dispositivo = ttk.Entry(main_frame, width=40)
 entry_dispositivo.pack(fill='x', pady=(0, 10))
 
 
+# Texto informativo para el usuario
+ttk.Label(main_frame, text="Agregue método para ser contactado en la misma descripción.", 
+          foreground="gray", font=('Helvetica', 9, 'italic')).pack(anchor='w', pady=(0, 0))
+
 ttk.Label(main_frame, text="Descripción del problema:").pack(anchor='w', pady=(5, 0))
 text_descripcion = tk.Text(main_frame, height=5, width=40,
                            bg=COLOR_FONDO_CLARO, fg='black', font=('Helvetica', 10),
