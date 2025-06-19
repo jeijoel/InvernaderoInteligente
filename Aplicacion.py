@@ -5,7 +5,8 @@ import os
 from Controler import *
 import threading
 import time
-
+from interfaz_graficos import InterfazGraficas
+import tkinter as tk
 
 def ventana_principal():
     #####Inicializar el controler$########
@@ -83,14 +84,20 @@ def ventana_principal():
 
     def mostrar_ventana_graficos():
         ventana_graficos = InterfazGraficas(ventana_principal, "datos_sensores_json_separados")
+        
+    def abrir_graficas():
+        carpeta = "datos_sensores_json_separados"
+        InterfazGraficas(ventana_principal, carpeta)
     etiqueta_temperatura = Label(lienzo_principal, text="Temperatura", bg="cornflower blue", fg="white", font="Arial 16 bold")
     etiqueta_temperatura.place(x=10, y=125)
 
     etiqueta_valor_temperatura = Label(lienzo_principal, text="Valor de Temperatura", bg="cornflower blue", fg="white", font="Arial 16")
     etiqueta_valor_temperatura.place(x=150, y=125)
 
-    boton_grafica_temperatura = Button(lienzo_principal, text="Grafica Temperatura", command=lienzo_grafica_temperatura, bg="white", fg="black", font="Arial 8",)
+    
+    boton_grafica_temperatura = Button(lienzo_principal, text="Grafica Temperatura", command=abrir_graficas, bg="white", fg="black", font="Arial 8")
     boton_grafica_temperatura.place(x=375, y=125)
+
 
     etiqueta_humedad = Label(lienzo_principal, text="Humedad", bg="cornflower blue", fg="white", font="Arial 16 bold")
     etiqueta_humedad.place(x=10, y=150)
@@ -228,6 +235,8 @@ def ventana_principal():
     def on_closing():
         serial_control.cerrar()
         detener_ciclo()
+
+    
 
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)

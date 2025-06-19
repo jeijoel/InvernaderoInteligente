@@ -24,6 +24,8 @@ class InterfazGraficas:
 
         self.construir_interfaz()
         self.crear_grafica()
+        self.actualizar_periodicamente()
+        
 
     def construir_interfaz(self):
         marco_superior = tk.Frame(self.ventana, bg='white')
@@ -34,6 +36,7 @@ class InterfazGraficas:
 
         ttk.Combobox(marco_superior, values=sensores, textvariable=self.sensor_seleccionado, state="readonly", width=18).pack(side="left", padx=5)
         ttk.Combobox(marco_superior, values=rangos, textvariable=self.rango_seleccionado, state="readonly", width=18).pack(side="left", padx=5)
+        tk.Button(marco_superior, text="Actualizar", command=self.crear_grafica).pack(side="left", padx=5)
 
         self.marco_grafica = tk.Frame(self.ventana, bg='white')
         self.marco_grafica.pack(fill=tk.BOTH, expand=True)
@@ -197,6 +200,25 @@ class InterfazGraficas:
 
         etiqueta_info = tk.Label(self.marco_grafica, text=info, bg="white", font=("Arial", 8), justify="left")
         etiqueta_info.pack(pady=2)
+    def actualizar_periodicamente(self):
+        self.crear_grafica()
+        self.ventana.after(5000, self.actualizar_periodicamente)  # cada 5000 ms (5 seg)
+        
+#Interfaz temporal para pruebas 
+#hay que agregar boton a la ventana principal para abrir esta interfaz
+if __name__ == "__main__":
+    import tkinter as tk
+    root = tk.Tk()
+    root.title("Simulación Celular - Prueba Directa")
+    root.geometry("400x300")
 
+    def abrir_interfaz():
+        from os import path
+        carpeta = "datos_sensores_json_separados"
+        if not path.exists(carpeta):
+            print(f"[ERROR] La carpeta '{carpeta}' no existe.")
+        else:
+            InterfazGraficas(root, carpeta)
 
-
+    tk.Button(root, text="Abrir Interfaz de Gráficas", command=abrir_interfaz, font=("Arial", 12)).pack(pady=20)
+    root.mainloop()
