@@ -10,7 +10,7 @@ import time
 import platform
 import subprocess
 
-######INSTALAR pip install opencv-python Pillow para usar el cv2
+######INSTALAR pip install opencv-python Pillow para usar el cv2!!!!!
 
 FOLDER = "capturas"
 LOG_FILE = "capturas_log.txt"

@@ -2,10 +2,19 @@ from tkinter import *
 from tkinter import messagebox
 from interfaz_graficos import *
 import os
+from Controler import *
+import threading
+import time
 
 
 def ventana_principal():
-
+    #####Inicializar el controler$########
+    serial_control = Control('COM3')  # No borrar
+    pico_host = '192.168.100.104'
+    pico_port = 1234
+    pico_client = PicoTCPClient(pico_host, pico_port)
+    ejecucion_activa = False
+    
     ventana_principal = Tk()
     ventana_principal.title('Interfaz Gráfica')
     # Obtener el tamaño real de la pantalla
@@ -24,6 +33,7 @@ def ventana_principal():
     # Cálculos del canvas
     ancho_lienzo_principal = 486
     largo_lienzo_principal = 920
+
 
     # Coordenadas para centrar el canvas
     canvas_x = (ancho_pantalla - ancho_lienzo_principal) // 2
@@ -160,7 +170,67 @@ def ventana_principal():
     boton_salir = Button(lienzo_principal, text='Cerrar', activebackground="#FFFFFF", activeforeground="#000000",fg="#FFFFFF", bg="#000000", cursor="ur_angle", relief=FLAT, overrelief=RAISED,command=Destruir_ventana_principal)
     boton_salir.place(x=203, y=715)
 
-    ventana_principal.protocol("WM_DELETE_WINDOW", desabilitado)
+        # Comandos individuales
+    def enviar_comando_1():
+        pico_client.send_command("LED_ON")
+
+    def enviar_comando_2():
+        pico_client.send_command("LED_OFF")
+
+    def enviar_comando_3():
+        pico_client.send_command("M1_ON")
+
+    def enviar_comando_4():
+        pico_client.send_command("M1_OFF")
+
+    def enviar_comando_5():
+        pico_client.send_command("M2_ON")
+
+    def enviar_comando_6():
+        pico_client.send_command("M2_OFF")
+
+    # Ciclo con hilo para ventilador##########################3
+    def iniciar_ventilador_ciclo():
+        try:
+            intervalo = 0 #---------- Aqui no se como retorna el valor la escala pero la definis aqui
+            threading.Thread(target=enviar_comando_7, args=(intervalo, "M1")).start()
+        except ValueError:
+            print("Intervalo inválido para ventilador.")
+
+    def enviar_comando_7(intervalo, objeto):
+        ejecucion_activa = True
+        while ejecucion_activa:
+            pico_client.send_command(f"{objeto}_ON")
+            time.sleep(intervalo)
+            pico_client.send_command(f"{objeto}_OFF")
+            time.sleep(intervalo)
+
+    # Ciclo con hilo para luces##############################
+    def iniciar_luces_ciclo():
+        try:
+            intervalo =  0 #---------- Aqui igual
+            threading.Thread(target=enviar_comando_8, args=(intervalo, "LED")).start()
+        except ValueError:
+            print("Intervalo inválido para luces.")
+
+    def enviar_comando_8( intervalo, objeto):
+        ejecucion_activa = True
+        while ejecucion_activa:
+            pico_client.send_command(f"{objeto}_ON")
+            time.sleep(intervalo)
+            pico_client.send_command(f"{objeto}_OFF")
+            time.sleep(intervalo)
+
+    # Método para detener el ciclo de los ontervalos de las luces y el ventilador, podes crear un boton para este
+    def detener_ciclo():
+        ejecucion_activa = False
+
+    def on_closing():
+        serial_control.cerrar()
+        detener_ciclo()
+
+
+    ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
 
     ventana_principal.mainloop()
 
