@@ -119,16 +119,33 @@ class Aplicacion:
                 messagebox.showwarning("Campos vacíos", "Por favor, complete todos los campos.")
                 return
 
+            id_dispositivo_nuevo = datos['id_disp']
+
+            # Verificar que no exista el id_disp en usuarios.txt
+            try:
+                with open("usuarios.txt", "r", encoding="utf-8") as archivo:
+                    for linea in archivo:
+                        campos = linea.strip().split(",")
+                        if len(campos) >= 3:
+                            id_existente = campos[2]
+                            if id_dispositivo_nuevo == id_existente:
+                                messagebox.showerror("Error de registro", f"El ID de dispositivo '{id_dispositivo_nuevo}' ya está registrado.")
+                                return
+            except FileNotFoundError:
+                # Si el archivo no existe, no hay problema, se creará después
+                pass
+
+            # Si no existe, registrar usuario normalmente
             try:
                 with open("usuarios.txt", "a+", encoding="utf-8") as archivo:
                     archivo.seek(0)
                     if archivo.read() and not archivo.read().endswith("\n"):
-                        #archivo.write("\n")
                         archivo.write(f"{datos['usuario']},{datos['contrasena']},{datos['id_disp']},{datos['nombre']},{datos['ubicacion']},{datos['num_dispositivos']},{datos['series']}\n")
                 messagebox.showinfo("Registro exitoso", "Usuario registrado correctamente.")
                 self.mostrar_pantalla("login")
             except Exception as e:
                 messagebox.showerror("Error", f"No se pudo guardar el usuario: {e}")
+
 
         tk.Button(frame, text="Registrar", bg="#096b35", fg="white",
                   font=("Arial", 10, "bold"), width=15,
