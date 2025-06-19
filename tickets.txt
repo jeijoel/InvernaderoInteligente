@@ -1,0 +1,5 @@
+{"usuario": "jeijoel", "cliente": "Johel", "dispositivo": "143678", "motivo": "Techo no funciona", "estado": "Resuelta", "fecha": "2025-06-17 18:55:43"}
+{"usuario": "edabarca", "cliente": "Edward", "dispositivo": "145589", "motivo": "No funca el de temperatura", "estado": "En Proceso", "fecha": "2025-06-17 23:15:31"}
+{"usuario": "edabarca", "cliente": "Edward", "dispositivo": "145589", "motivo": "la luz no enciende", "estado": "En Proceso", "fecha": "2025-06-18 00:50:42"}
+{"usuario": "uy", "cliente": "juan", "dispositivo": "454521", "motivo": "sdfgvhbnj", "estado": "Pendiente", "fecha": "2025-06-18 00:57:09"}
+{"usuario": "jeijoel", "cliente": "Johel", "dispositivo": "743678", "motivo": "luz quemada", "estado": "Resuelta", "fecha": "2025-06-18 20:52:42"}
