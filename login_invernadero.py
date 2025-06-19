@@ -3,6 +3,9 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import webbrowser
 
+from Aplicacion import ventana_principal
+
+
 class Aplicacion:
     def __init__(self, root):
         self.root = root
@@ -134,10 +137,11 @@ class Aplicacion:
             return
 
         if Autenticador.validar_credenciales(usuario, contrasena):
-            iniciar_sesion()
+            iniciar_sesion(self.root)
         else:
             self.etiqueta_error.config(text="Datos incorrectos.")
-            
+    
+     
     def abrir_ayuda(self):
         import webbrowser
         import os
@@ -164,14 +168,17 @@ class Autenticador:
             messagebox.showerror("Error", f"No se pudo leer archivo de usuarios: {e}")
         return False
     
-# Función para iniciar sesión, que llama a la interfaz 
-def iniciar_sesion():
-    print("Iniciando sesión...")
+
+def iniciar_sesion(root):
+    root.destroy()            # cierra la ventana de login
+    ventana_principal()       # abre la interfaz principal
+
     
 def main():
     root = tk.Tk()
     app = Aplicacion(root)
     root.mainloop()
+    
 
 if __name__ == "__main__":
     main()

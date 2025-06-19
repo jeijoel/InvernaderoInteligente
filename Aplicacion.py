@@ -243,4 +243,5 @@ def ventana_principal():
 
     ventana_principal.mainloop()
 
-ventana_principal()
+if __name__ == "__main__":
+    ventana_principal()
