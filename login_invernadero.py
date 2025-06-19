@@ -77,6 +77,18 @@ class Aplicacion:
                                 activebackground="#ffffff", cursor="hand2",
                                 command=self.abrir_ayuda)
         boton_ayuda.place(relx=0.97, rely=0.02, anchor="ne")
+        self.modo_admin = False  # Por defecto usuario normal
+        def toggle_modo():
+                self.modo_admin = not self.modo_admin
+                if self.modo_admin:
+                    boton_modo.config(text="Modo: Admin")
+                else:
+                    boton_modo.config(text="Modo: Usuario")
+
+        boton_modo = tk.Button(frame, text="Modo: Usuario", font=("Arial", 9, "bold"),
+                                bg="#ffffff", fg="#096b35", bd=0, activebackground="#ffffff",
+                                cursor="hand2", command=toggle_modo)
+        boton_modo.place(relx=0.95, rely=0.03, anchor="ne")
         return frame
 
     def crear_pantalla_registro(self):
@@ -129,17 +141,24 @@ class Aplicacion:
         return frame
 
     def procesar_login(self):
-        usuario = self.entrada_usuario.get().strip()
-        contrasena = self.entrada_contrasena.get().strip()
+            usuario = self.entrada_usuario.get().strip()
+            contrasena = self.entrada_contrasena.get().strip()
 
-        if not usuario or not contrasena:
-            self.etiqueta_error.config(text="Completa todos los campos.")
-            return
+            if not usuario or not contrasena:
+                self.etiqueta_error.config(text="Completa todos los campos.")
+                return
 
-        if Autenticador.validar_credenciales(usuario, contrasena):
-            iniciar_sesion(self.root)
-        else:
-            self.etiqueta_error.config(text="Datos incorrectos.")
+            if self.modo_admin:
+                if Autenticador.validar_credenciales(usuario, contrasena, admin=True):
+                    iniciar_sesion_admin(self.root)
+                else:
+                    self.etiqueta_error.config(text="Datos incorrectos.")
+            else:
+                if Autenticador.validar_credenciales(usuario, contrasena):
+                    iniciar_sesion(self.root)
+                else:
+                    self.etiqueta_error.config(text="Datos incorrectos.")
+
     
      
     def abrir_ayuda(self):
@@ -155,18 +174,26 @@ class Aplicacion:
 
 class Autenticador:
     @staticmethod
-    def validar_credenciales(usuario, contrasena):
+    def validar_credenciales(usuario, contrasena, admin=False):
+        archivo_path = "administrador.txt" if admin else "usuarios.txt"
         try:
-            with open("usuarios.txt", "r") as archivo:
+            with open(archivo_path, "r") as archivo:
                 for linea in archivo:
                     datos = linea.strip().split(",")
-                    if len(datos) >= 3:
-                        u, c, id_disp = datos[0], datos[1], datos[2]
-                        if (usuario == u or usuario == id_disp) and contrasena == c:
+                    if len(datos) >= 2:
+                        u, c = datos[0], datos[1]
+                        if usuario == u and contrasena == c:
                             return True
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudo leer archivo de usuarios: {e}")
+            messagebox.showerror("Error", f"No se pudo leer archivo: {archivo_path}\n{e}")
         return False
+
+def iniciar_sesion_admin(root):
+    root.destroy()  # Cierra login
+    from Interfaz_Soporte import InterfazLlamadas
+    soporte_root = tk.Tk()
+    app = InterfazLlamadas(soporte_root)
+    soporte_root.mainloop()
     
 
 def iniciar_sesion(root):

@@ -1,0 +1,2 @@
+formato usuario,contraseña,id_dispositivo
+diegomora,mora,9898,Diego Mora,Cartago,1,9898diegomora,mora,9898,Diego Mora,Cartago,1,9898
