@@ -9,7 +9,7 @@ from interfaz_graficos import InterfazGraficas
 import tkinter as tk
 
 def ventana_principal():
-    #serial_control = Control('COM3')  # No borrar
+    #serial_control = Control('COM3')
     pico_host = '192.168.100.104'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -17,7 +17,9 @@ def ventana_principal():
     estado_techo_abierto = False
     estado_luz_encendida = False
     estado_ventilador_encendido = False
-    ejecucion_activa = False
+
+    ejecucion_activa_luz = False
+    ejecucion_activa_ventilador = False
 
     intervalo_datos = 5
     intervalo_luz = 15
@@ -102,9 +104,33 @@ def ventana_principal():
             boton_encendido_apagado_manual_ventilador.config(text="Apagar Ventilador")
         estado_ventilador_encendido = not estado_ventilador_encendido
 
+    def ciclo_luz():
+        nonlocal ejecucion_activa_luz
+        ejecucion_activa_luz = True
+        while ejecucion_activa_luz:
+            pico_client.send_command("LED_ON")
+            time.sleep(intervalo_luz)
+            pico_client.send_command("LED_OFF")
+            time.sleep(intervalo_luz)
+
+    def ciclo_ventilador():
+        nonlocal ejecucion_activa_ventilador
+        ejecucion_activa_ventilador = True
+        while ejecucion_activa_ventilador:
+            pico_client.send_command("M1_ON")
+            time.sleep(intervalo_ventilador)
+            pico_client.send_command("M1_OFF")
+            time.sleep(intervalo_ventilador)
+
+    def iniciar_ciclos():
+        detener_ciclo()
+        threading.Thread(target=ciclo_luz, daemon=True).start()
+        threading.Thread(target=ciclo_ventilador, daemon=True).start()
+
     def detener_ciclo():
-        nonlocal ejecucion_activa
-        ejecucion_activa = False
+        nonlocal ejecucion_activa_luz, ejecucion_activa_ventilador
+        ejecucion_activa_luz = False
+        ejecucion_activa_ventilador = False
 
     def on_closing():
         serial_control.cerrar()
@@ -169,6 +195,12 @@ def ventana_principal():
 
     boton_salir = Button(lienzo_principal, text='Cerrar', command=on_closing, activebackground="#FFFFFF", activeforeground="#000000", fg="#FFFFFF", bg="#000000", cursor="ur_angle", relief=FLAT, overrelief=RAISED)
     boton_salir.place(x=203, y=850)
+
+    boton_iniciar_ciclos = Button(lienzo_principal, text="Iniciar Ciclos", command=iniciar_ciclos, bg="white", fg="black", font="Arial 10")
+    boton_iniciar_ciclos.place(x=320, y=750)
+
+    boton_detener_ciclos = Button(lienzo_principal, text="Detener Ciclos", command=detener_ciclo, bg="white", fg="black", font="Arial 10")
+    boton_detener_ciclos.place(x=320, y=780)
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
     ventana_principal.mainloop()
