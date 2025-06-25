@@ -1,4 +1,5 @@
 from tkinter import *
+from Read_Data_JSON import SensorData
 from tkinter import messagebox
 from interfaz_graficos import *
 import os
@@ -9,7 +10,18 @@ from interfaz_graficos import InterfazGraficas
 import tkinter as tk
 
 def ventana_principal():
-    #serial_control = Control('COM3')
+    # Últimos timestamps leídos para evitar duplicar notificaciones
+    ultimo_ts_temp = None
+    ultimo_ts_hum = None
+    ultimo_ts_agua = None
+    ultimo_ts_luz = None
+
+    sensor_temp = SensorData("datos_sensores_json_separados", "temperatura_dht.json")
+    sensor_hum = SensorData("datos_sensores_json_separados", "humedad_suelo.json")
+    sensor_agua = SensorData("datos_sensores_json_separados", "nivel_agua.json")
+    sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
+
+    serial_control = Control('COM3')
     pico_host = '192.168.100.104'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -137,6 +149,80 @@ def ventana_principal():
         detener_ciclo()
         ventana_principal.destroy()
 
+    def verificar_y_notificar_datos():
+        nonlocal ultimo_ts_temp, ultimo_ts_hum, ultimo_ts_agua, ultimo_ts_luz
+
+        try:
+            ts_temp, valor_temp = sensor_temp.read_line()
+            temp_c = float(valor_temp)
+            if ts_temp != ultimo_ts_temp:
+                if temp_c < 15:
+                    messagebox.showwarning("Temperatura baja", f"La temperatura es muy baja: {temp_c} °C")
+                elif temp_c > 35:
+                    messagebox.showwarning("Temperatura alta", f"La temperatura es muy alta: {temp_c} °C")
+                ultimo_ts_temp = ts_temp
+        except Exception as e:
+            print(f"Error leyendo temperatura: {e}")
+
+        try:
+            ts_hum, estado_suelo = sensor_hum.read_line()
+            if ts_hum != ultimo_ts_hum:
+                if "Seco" in estado_suelo:
+                    messagebox.showwarning("Humedad baja", "El suelo está seco. Requiere riego.")
+                ultimo_ts_hum = ts_hum
+        except Exception as e:
+            print(f"Error leyendo humedad: {e}")
+
+        try:
+            ts_agua, estado_agua = sensor_agua.read_line()
+            if ts_agua != ultimo_ts_agua:
+                if "Vacío" in estado_agua or "vacío" in estado_agua:
+                    messagebox.showwarning("Nivel de agua", "El tanque de agua está vacío.")
+                ultimo_ts_agua = ts_agua
+        except Exception as e:
+            print(f"Error leyendo nivel de agua: {e}")
+
+        try:
+            ts_luz, estado_luz = sensor_luz.read_line()
+            if ts_luz != ultimo_ts_luz:
+                if estado_luz.lower() == "oscuro":
+                    messagebox.showinfo("Iluminación", "La iluminación es baja.")
+                ultimo_ts_luz = ts_luz
+        except Exception as e:
+            print(f"Error leyendo nivel de luz: {e}")
+
+    def actualizar_datos():
+        try:
+            ultimo_ts_temp, temp = sensor_temp.read_line()
+            etiqueta_valor_temperatura.config(text=f"{temp} °C")
+        except:
+            etiqueta_valor_temperatura.config(text="-- °C")
+
+        try:
+            ultimo_ts_hum, humedad = sensor_hum.read_line()
+            etiqueta_valor_humedad.config(text=humedad)
+        except:
+            etiqueta_valor_humedad.config(text="--")
+
+        try:
+            ultimo_ts_agua, nivel_agua = sensor_agua.read_line()
+            etiqueta_estado_agua.config(text=f"Nivel de agua del Tanque: {nivel_agua}")
+        except:
+            etiqueta_estado_agua.config(text="Nivel de agua del Tanque: --")
+
+        try:
+            ultimo_ts_luz, iluminacion = sensor_luz.read_line()
+            etiqueta_nivel_luz.config(text=iluminacion)
+        except:
+            etiqueta_nivel_luz.config(text="--")
+
+    def guardar_intervalos():
+        pico_client.send_command(f"SET_INTERVAL_DATA:{intervalo_datos}")
+        pico_client.send_command(f"SET_INTERVAL_LIGHT:{intervalo_luz}")
+        pico_client.send_command(f"SET_INTERVAL_FAN:{intervalo_ventilador}")
+        verificar_y_notificar_datos()  # ← Aquí se dispara la verificación
+
+
     etiqueta_temperatura = Label(lienzo_principal, text="Temperatura", bg="cornflower blue", fg="white", font="Arial 16 bold")
     etiqueta_temperatura.place(x=10, y=125)
     etiqueta_valor_temperatura = Label(lienzo_principal, text="-- °C", bg="cornflower blue", fg="white", font="Arial 16")
@@ -201,6 +287,14 @@ def ventana_principal():
 
     boton_detener_ciclos = Button(lienzo_principal, text="Detener Ciclos", command=detener_ciclo, bg="white", fg="black", font="Arial 10")
     boton_detener_ciclos.place(x=320, y=780)
+
+    boton_actualizar = Button(lienzo_principal, text="Actualizar Datos", command=actualizar_datos, font="Arial 12")
+    boton_actualizar.place(x=180, y=340)
+
+    etiqueta_estado_agua = Label(lienzo_principal, text="Nivel de agua del Tanque: --", bg="cornflower blue", fg="white", font="Arial 16")
+    etiqueta_estado_agua.place(x=10, y=220)
+
+    boton_tickets = Button(lienzo_principal, text="Tickets", command=)
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
     ventana_principal.mainloop()
