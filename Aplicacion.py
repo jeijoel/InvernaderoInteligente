@@ -9,6 +9,7 @@ import time
 from interfaz_graficos import InterfazGraficas
 import tkinter as tk
 import Config
+from CamaraWeb import abrir_camara
 
 def ventana_principal():
     # Últimos timestamps leídos para evitar duplicar notificaciones
@@ -292,7 +293,10 @@ def ventana_principal():
     etiqueta_estado_agua = Label(lienzo_principal, text="Nivel de agua del Tanque: --", bg="cornflower blue", fg="white", font="Arial 16")
     etiqueta_estado_agua.place(x=10, y=220)
 
-    #boton_tickets = Button(lienzo_principal, text="Tickets", command=)
+    boton_tickets = Button(lienzo_principal, text="Tickets", command=abrir_camara)
+
+    boton_camara = Button(lienzo_principal, text="Cámara", command=abrir_camara)
+    boton_camara.place(x=120, y=340)
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
     ventana_principal.mainloop()

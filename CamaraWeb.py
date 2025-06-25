@@ -65,6 +65,7 @@ class CameraApp:
         self.reproduciendo = False
         self.auto = False
         self.actualizar_frame()
+        self.frames_video = []
 
         self.canvas_video = None
         self.btn_cerrar_video = None
@@ -225,7 +226,7 @@ class CameraApp:
 
             if self.canvas_video:
                 self.canvas_video.create_image(0, 0, anchor=tk.NW, image=imgtk)
-                self.canvas_video.image = imgtk
+                self.frames_video.append(imgtk)
 
             time.sleep(0.1)
 
@@ -275,6 +276,8 @@ class CameraApp:
         if self.btn_cerrar_video:
             self.btn_cerrar_video.destroy()
             self.btn_cerrar_video = None
+        if hasattr(self, 'frames_video'):
+            self.frames_video.clear()
 
 
     def cerrar(self):
@@ -282,7 +285,17 @@ class CameraApp:
         self.cap.release()
         self.root.destroy()
 
-root = tk.Tk()
-app = CameraApp(root)
-root.protocol("WM_DELETE_WINDOW", app.cerrar)
-root.mainloop()
+def abrir_camara():
+    if tk._default_root is not None:
+        # Ya existe una ventana principal → crear una ventana secundaria
+        ventana = tk.Toplevel()
+        app = CameraApp(ventana)
+        ventana.protocol("WM_DELETE_WINDOW", app.cerrar)
+    else:
+        # No hay ventana aún → se puede usar Tk() normalmente
+        root = tk.Tk()
+        app = CameraApp(root)
+        root.protocol("WM_DELETE_WINDOW", app.cerrar)
+        root.mainloop()
+
+
