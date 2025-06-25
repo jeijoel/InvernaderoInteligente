@@ -8,6 +8,7 @@ import threading
 import time
 from interfaz_graficos import InterfazGraficas
 import tkinter as tk
+import Config
 
 def ventana_principal():
     # Últimos timestamps leídos para evitar duplicar notificaciones
@@ -21,7 +22,7 @@ def ventana_principal():
     sensor_agua = SensorData("datos_sensores_json_separados", "nivel_agua.json")
     sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
 
-    serial_control = Control('COM3')
+    #serial_control = Control('COM3')
     pico_host = '192.168.100.104'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -61,7 +62,9 @@ def ventana_principal():
     def actualizar_intervalo(valor):
         nonlocal intervalo_datos
         intervalo_datos = int(valor)
-        print(f"Intervalo de toma de datos: {intervalo_datos}s")
+        print(f"Intervalo de toma de datos: {intervalo_datos}s, se guardara en el config.json")
+        config = Configuracion(intervalo=0)
+        config.escribir_config(intervalo_datos)
 
     def actualizar_intervalo_luz(valor):
         nonlocal intervalo_luz
@@ -73,12 +76,7 @@ def ventana_principal():
         intervalo_ventilador = int(valor)
         print(f"Intervalo de ventilador: {intervalo_ventilador}s")
 
-    def guardar_intervalos():
-        print(f"Enviando intervalos al microcontrolador...")
-        pico_client.send_command(f"SET_INTERVAL_DATA:{intervalo_datos}")
-        pico_client.send_command(f"SET_INTERVAL_LIGHT:{intervalo_luz}")
-        pico_client.send_command(f"SET_INTERVAL_FAN:{intervalo_ventilador}")
-        print("Intervalos enviados correctamente.")
+
 
     def alternar_techo():
         nonlocal estado_techo_abierto
@@ -145,7 +143,7 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
-        serial_control.cerrar()
+        #serial_control.cerrar()
         detener_ciclo()
         ventana_principal.destroy()
 
@@ -294,7 +292,7 @@ def ventana_principal():
     etiqueta_estado_agua = Label(lienzo_principal, text="Nivel de agua del Tanque: --", bg="cornflower blue", fg="white", font="Arial 16")
     etiqueta_estado_agua.place(x=10, y=220)
 
-    boton_tickets = Button(lienzo_principal, text="Tickets", command=)
+    #boton_tickets = Button(lienzo_principal, text="Tickets", command=)
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
     ventana_principal.mainloop()
