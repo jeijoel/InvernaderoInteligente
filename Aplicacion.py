@@ -43,9 +43,14 @@ def ventana_principal():
             def read_line(self): return (None, "--")
         sensor_temp = sensor_hum = sensor_agua = sensor_luz = MockSensor()
 
+<<<<<<< HEAD
 
     # Conexión con el controlador
     pico_host = '192.168.100.104'
+=======
+    serial_control = Control('COM3')
+    pico_host = '172.20.10.2'
+>>>>>>> 0dc9b44e19621928faa8b93da611ecb9587ebe49
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
 
@@ -83,9 +88,15 @@ def ventana_principal():
     def actualizar_intervalo(valor):
         nonlocal intervalo_datos
         intervalo_datos = int(valor)
+<<<<<<< HEAD
         print(f"Intervalo de toma de datos: {intervalo_datos}s")
         # config = Config.Configuracion(intervalo=0)
         # config.escribir_config(intervalo_datos)
+=======
+        print(f"Intervalo de toma de datos: {intervalo_datos}s, se guardara en el config.json")
+        config = Configuracion()
+        config.escribir_config(intervalo_datos)
+>>>>>>> 0dc9b44e19621928faa8b93da611ecb9587ebe49
 
     def actualizar_intervalo_luz(valor):
         nonlocal intervalo_luz
@@ -170,9 +181,15 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
+<<<<<<< HEAD
         detener_ciclos()
         pico_client.close()
         ventana.destroy()
+=======
+        serial_control.cerrar()
+        detener_ciclo()
+        ventana_principal.destroy()
+>>>>>>> 0dc9b44e19621928faa8b93da611ecb9587ebe49
 
     def verificar_y_notificar_datos():
         nonlocal ultimo_ts_temp, ultimo_ts_hum, ultimo_ts_agua, ultimo_ts_luz

@@ -150,10 +150,11 @@ class Control:
         print(f"Iniciando comunicador conectando a {self.ser.port}...")
         try:
             while self.running:
-                config = Configuracion()
-                intervalo = config.obtener_intervalo_medicion() ##----> Aqui es donde se define el intervalo, en la interfaz se debe hacer un boton que escriba en el JSON (config.json) 
+                 ##----> Aqui es donde se define el intervalo, en la interfaz se debe hacer un boton que escriba en el JSON (config.json) 
                 
                 while self.ser.in_waiting > 0:
+                    config = Configuracion()
+                    intervalo = config.obtener_intervalo_medicion()
                     line = self.ser.readline().decode('utf-8').strip()
 
                     if line:
