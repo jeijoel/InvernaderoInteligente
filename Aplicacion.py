@@ -10,6 +10,7 @@ from interfaz_graficos import InterfazGraficas
 import tkinter as tk
 import Config
 from CamaraWeb import abrir_camara
+from Interfaz_Ticket_Conectado import ventana_tickets
 
 def ventana_principal():
     # Últimos timestamps leídos para evitar duplicar notificaciones
@@ -297,6 +298,10 @@ def ventana_principal():
 
     boton_camara = Button(lienzo_principal, text="Cámara", command=abrir_camara)
     boton_camara.place(x=120, y=340)
+
+    # Luego en tu interfaz principal:
+    btn_tickets = Button(lienzo_principal, text="Abrir Tickets", command=ventana_tickets)
+    btn_tickets.place(x=200, y=400)  # ajusta la posición
 
     ventana_principal.protocol("WM_DELETE_WINDOW", on_closing)
     ventana_principal.mainloop()
