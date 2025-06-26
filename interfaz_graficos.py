@@ -112,7 +112,7 @@ class InterfazGraficas:
             widget.destroy()
 
         configuracion_sensor = {
-            "Temperatura": ("temperatura_dht.json", "Temperatura (°C)", "red"),
+            "Temperatura": ("temperatura_dht.json", "Temperatura (°C)", "blue"),
             "Humedad Suelo": ("humedad_suelo.json", "Estado del Suelo", "blue"),
             "Nivel Agua": ("nivel_agua.json", "Nivel de Agua", "green"),
         }
@@ -157,7 +157,47 @@ class InterfazGraficas:
 
         fig, ax = plt.subplots(figsize=(6, 2.2))
 
-        ax.plot(tiempos_filtrados, valores_filtrados, marker='o', linestyle='-', color=color, markersize=4)
+        # Cambiar color según umbrales para temperatura
+        if sensor == "Temperatura":
+            line_color = []
+            for valor in valores_filtrados:
+                if valor > 35:  # Máximo
+                    line_color.append('red')
+                elif valor < 15:  # Mínimo
+                    line_color.append('blue')
+                else:
+                    line_color.append('green')
+            
+            # Dibujar puntos con colores según umbral
+            for i in range(len(tiempos_filtrados)-1):
+                ax.plot(tiempos_filtrados[i:i+2], valores_filtrados[i:i+2], 
+                        marker='o', linestyle='-', color=line_color[i], markersize=4)
+            
+            # Agregar líneas de umbral
+            ax.axhline(y=35, color='red', linestyle='--', alpha=0.7, label="Máximo (35°C)")
+            ax.axhline(y=15, color='blue', linestyle='--', alpha=0.7, label="Mínimo (15°C)")
+            ax.legend(loc='upper right', fontsize=8)
+            
+        elif sensor == "Humedad Suelo":
+            # Para humedad, usar verde para mojado/húmedo y rojo para seco
+            line_color = []
+            for valor in valores_filtrados:
+                if valor == 0:  # Seco
+                    line_color.append('red')
+                else:  # Húmedo o mojado
+                    line_color.append('green')
+            
+            for i in range(len(tiempos_filtrados)-1):
+                ax.plot(tiempos_filtrados[i:i+2], valores_filtrados[i:i+2], 
+                        marker='o', linestyle='-', color=line_color[i], markersize=4)
+            
+            ax.set_yticks([0, 1, 2])
+            ax.set_yticklabels(["Seco", "Húmedo", "Mojado"])
+            
+        else:
+            # Gráfica normal para otros sensores
+            ax.plot(tiempos_filtrados, valores_filtrados, marker='o', linestyle='-', color=color, markersize=4)
+
         ax.set_title(f"{etiqueta} - {rango}")
         ax.tick_params(axis='x', rotation=45)
         ax.grid(True, alpha=0.3)
@@ -176,9 +216,6 @@ class InterfazGraficas:
             ax.set_yticks([0, 1, 2, 3])
             ax.set_yticklabels(["Vacío", "Bajo", "Medio", "Lleno"])
             ax.legend(loc='upper right', fontsize=8)
-        elif sensor == "Humedad Suelo":
-            ax.set_yticks([0, 1, 2])
-            ax.set_yticklabels(["Seco", "Húmedo", "Mojado"])
 
         plt.tight_layout()
 
@@ -202,7 +239,7 @@ class InterfazGraficas:
         etiqueta_info.pack(pady=2)
     def actualizar_periodicamente(self):
         self.crear_grafica()
-        self.ventana.after(5000, self.actualizar_periodicamente)  # cada 5000 ms (5 seg)
+        self.ventana.after(30000, self.actualizar_periodicamente)  # cada 30000 ms (30seg)
         
 #Interfaz temporal para pruebas 
 #hay que agregar boton a la ventana principal para abrir esta interfaz
