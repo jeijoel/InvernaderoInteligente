@@ -37,8 +37,8 @@ def ventana_principal():
     sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
 
     # Conexión con Controladores
-    #serial_control = Control('COM3')
-    pico_host = '172.20.10.2'
+    serial_control = Control('COM3')
+    pico_host = '192.168.4.1'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
 
@@ -95,7 +95,7 @@ def ventana_principal():
 
     def alternar_techo():
         nonlocal estado_techo_abierto
-        command, text_estado, text_boton = ("M2_OFF", "Cerrado", "Abrir Techo") if estado_techo_abierto else ("M2_ON", "Abierto", "Cerrar Techo")
+        command, text_estado, text_boton = ("M1_OFF", "Cerrado", "Abrir Techo") if estado_techo_abierto else ("M1_ON", "Abierto", "Cerrar Techo")
         pico_client.send_command(command)
         etiqueta_estado_techo.config(text=text_estado)
         boton_abrir_cerrar_techo.config(text=text_boton)
@@ -112,7 +112,7 @@ def ventana_principal():
 
     def alternar_ventilador():
         nonlocal estado_ventilador_encendido
-        command, text_estado, text_boton = ("M1_OFF", "Apagado", "Encender") if estado_ventilador_encendido else ("M1_ON", "Encendido", "Apagar")
+        command, text_estado, text_boton = ("M2_ON", "Apagado", "Encender") if estado_ventilador_encendido else ("M2_OFF", "Encendido", "Apagar")
         pico_client.send_command(command)
         etiqueta_estado_ventilador.config(text=text_estado)
         boton_encendido_apagado_manual_ventilador.config(text=text_boton)
@@ -132,10 +132,10 @@ def ventana_principal():
         nonlocal ejecucion_activa_ventilador
         ejecucion_activa_ventilador = True
         while ejecucion_activa_ventilador:
-            pico_client.send_command("M1_ON")
+            pico_client.send_command("M2_ON")
             time.sleep(intervalo_ventilador)
             if not ejecucion_activa_ventilador: break
-            pico_client.send_command("M1_OFF")
+            pico_client.send_command("M2_OFF")
             time.sleep(intervalo_ventilador)
 
     def iniciar_ciclos():
@@ -149,7 +149,8 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
-        #serial_control.cerrar()
+        serial_control.cerrar()
+        pico_client.disconnect()
         detener_ciclos()
         ventana.destroy()
 
