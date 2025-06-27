@@ -1,11 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox, Frame, Label, Button, Scale, Canvas, HORIZONTAL
+from tkinter import messagebox, Frame, Label, Button, Scale, Canvas, HORIZONTAL, VERTICAL, Scrollbar
 import threading
 import time
 import os
-
-# --- Módulos del Proyecto ---
-# Asegúrate de que estos archivos .py estén en la misma carpeta
 from Read_Data_JSON import SensorData
 from interfaz_graficos import InterfazGraficas
 from Controler import PicoTCPClient, Control
@@ -67,12 +64,12 @@ def ventana_principal():
         print("Advertencia: No se encontró el archivo 'Interfaz.ico'.")
 
     # Centrar la ventana en la pantalla
-    ancho_ventana = 900
-    alto_ventana = 750
+    ancho_ventana = 500
+    alto_ventana = 600
     x_pos = (ventana.winfo_screenwidth() // 2) - (ancho_ventana // 2)
     y_pos = (ventana.winfo_screenheight() // 2) - (alto_ventana // 2)
     ventana.geometry(f'{ancho_ventana}x{alto_ventana}+{x_pos}+{y_pos}')
-    ventana.resizable(False, False)
+    
 
     # --- Funciones Lógicas (sin alterar su funcionamiento interno) ---
     def mostrar_ventana_graficos():
@@ -206,8 +203,24 @@ def ventana_principal():
         verificar_y_notificar_datos()
 
     # --- Construcción de la Interfaz Gráfica ---
-    main_frame = Frame(ventana, bg=COLOR_FONDO, padx=20, pady=20)
-    main_frame.pack(expand=True, fill="both")
+
+    # Crear un Canvas y una Scrollbar
+    canvas = Canvas(ventana, bg=COLOR_FONDO)
+    scrollbar = Scrollbar(ventana, orient=VERTICAL, command=canvas.yview)
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    scrollbar.pack(side="right", fill="y")
+    canvas.pack(side="left", fill="both", expand=True)
+
+    # Crear el main_frame dentro del Canvas
+    main_frame = Frame(canvas, bg=COLOR_FONDO, padx=20, pady=20)
+    canvas.create_window((0, 0), window=main_frame, anchor="nw")
+
+    # Configurar el scrollregion del canvas para que se ajuste al tamaño del main_frame
+    def on_frame_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    main_frame.bind("<Configure>", on_frame_configure)
 
     # --- Sección de Sensores ---
     sensores_frame = Frame(main_frame, bg=COLOR_MARCO, bd=2, relief="groove")
