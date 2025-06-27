@@ -3,7 +3,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import webbrowser
 
-from Aplicacion import ventana_principal
+from app_provisional import ventana_principal
 
 
 class Aplicacion:
