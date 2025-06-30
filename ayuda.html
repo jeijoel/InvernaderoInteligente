@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Preguntas Frecuentes - Green Invernadero</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda y Soporte - Green Invernadero</title>
     <style>
         body {
             background-color: #096B35;
@@ -10,27 +11,43 @@
             margin: 0;
             padding: 0;
             color: #ffffff;
+            line-height: 1.6;
         }
 
         header {
             background-color: #ffffff;
             padding: 20px;
             text-align: center;
+            border-bottom: 5px solid #7AC35D;
         }
 
         header img {
             height: 80px;
+            vertical-align: middle;
         }
 
         h1 {
             color: #096B35;
             margin-top: 10px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 20px;
         }
 
         .contenido {
-            padding: 30px;
+            padding: 20px 30px 40px 30px;
             max-width: 800px;
             margin: auto;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        h2 {
+            color: #ffffff;
+            border-bottom: 2px solid #7AC35D;
+            padding-bottom: 10px;
+            margin-top: 40px;
         }
 
         h3 {
@@ -45,7 +62,7 @@
 
         footer {
             text-align: center;
-            padding: 15px;
+            padding: 20px;
             background-color: #7AC35D;
             color: white;
             margin-top: 30px;
@@ -54,11 +71,13 @@
 </head>
 <body>
     <header>
+        <!-- Se recomienda usar una imagen con fondo transparente -->
         <img src="logo.png" alt="Logo Green Invernadero">
-        <h1>Preguntas Frecuentes</h1>
+        <h1>Ayuda y Soporte</h1>
     </header>
 
     <div class="contenido">
+        <h2>Preguntas Frecuentes</h2>
         <h3>¿Cómo ingreso al sistema?</h3>
         <p>Ingrese su usuario o ID de dispositivo y su contraseña, luego haga clic en <strong>Entrar</strong>.</p>
 
@@ -69,7 +88,47 @@
         <p>Presione el botón <strong>Registrarse</strong> y complete el formulario con sus datos.</p>
 
         <h3>¿Qué pasa si tengo problemas técnicos?</h3>
-        <p>Revise su conexión a Internet. Si el problema persiste, contacte al equipo de soporte técnico.</p>
+        <p>Revise su conexión a Internet. Si el problema persiste, contacte al equipo de soporte técnico a través de la sección <strong>Tickets Soporte</strong> de la aplicación.</p>
+
+        <!-- Manual de Usuario -->
+        <h2>Manual de Usuario</h2>
+
+        <h3>Panel de Sensores</h3>
+        <p>
+            Esta sección muestra en tiempo real los datos recopilados por los sensores del invernadero:
+            <br><strong>- Temperatura:</strong> Muestra la temperatura ambiente actual en grados Celsius.
+            <br><strong>- Humedad Suelo:</strong> Indica si el suelo está "Húmedo" o "Seco".
+            <br><strong>- Nivel Agua:</strong> Muestra el estado del tanque de agua ("Lleno", "Medio", "Vacío").
+            <br><strong>- Iluminación:</strong> Indica el nivel de luz ("Luz", "Oscuro").
+            <br><br>
+            Presione <strong>Ver Gráficas</strong> para visualizar el historial de datos de cada sensor. Use el botón <strong>Actualizar Datos de Sensores</strong> para refrescar la información manualmente.
+        </p>
+
+        <h3>Alertas Automáticas</h3>
+        <p>La aplicación le notificará con una ventana emergente si detecta condiciones críticas, como temperaturas muy altas (&gt;35°C) o bajas (&lt;15°C), suelo seco, nivel de agua bajo o falta de iluminación.</p>
+
+        <h3>Control Manual de Actuadores</h3>
+        <p>
+            Permite controlar directamente los componentes del invernadero:
+            <br><strong>- Techo:</strong> Use el botón <strong>Abrir/Cerrar Techo</strong> para controlar la cubierta superior. El estado actual (Abierto/Cerrado) se muestra al lado.
+            <br><strong>- Luz:</strong> Use <strong>Encender Luz / Apagar Luz</strong> para controlar la iluminación artificial.
+            <br><strong>- Ventilador:</strong> Use <strong>Encender / Apagar</strong> para activar o desactivar el ventilador. El estado se muestra al lado.
+        </p>
+
+        <h3>Configuración de Ciclos Automáticos</h3>
+        <p>
+            Aquí puede configurar el comportamiento automático del sistema. Ajuste los deslizadores para definir los siguientes intervalos en segundos:
+            <br><strong>- Intervalo Datos:</strong> Define cada cuántos segundos el sistema central registrará los datos de los sensores.
+            <br><strong>- Intervalo Luz:</strong> Define la duración que la luz permanecerá encendida y luego apagada en un ciclo.
+            <br><strong>- Intervalo Ventilador:</strong> Define la duración que el ventilador permanecerá encendido y luego apagado en un ciclo.
+            <br><br>
+            Después de ajustar los intervalos, es <strong>muy importante</strong> presionar <strong>Guardar Intervalos</strong> para enviar la nueva configuración al dispositivo. Use <strong>Iniciar Ciclos</strong> para comenzar la operación automática y <strong>Detener Ciclos</strong> para pararla en cualquier momento.
+        </p>
+
+        <h3>Funciones Adicionales</h3>
+        <p><strong>- Ver Cámara:</strong> Abre una ventana para visualizar la transmisión de la cámara web instalada en el invernadero.</p>
+        <p><strong>- Tickets Soporte:</strong> Abre la interfaz para crear y gestionar tickets de soporte técnico con el administrador.</p>
+        <p><strong>- Cerrar Aplicación:</strong> Es importante usar este botón para cerrar el programa. Así se asegura que la conexión con el hardware se termine correctamente y se detengan todos los procesos en segundo plano.</p>
     </div>
 
     <footer>
