@@ -70,7 +70,7 @@ def ventana_principal():
     sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
 
     # Conexión con Controladores
-    #serial_control = Control('COM3')
+    serial_control = Control('COM3')
     pico_host = '192.168.4.1'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -128,7 +128,7 @@ def ventana_principal():
 
     def alternar_techo():
         nonlocal estado_techo_abierto
-        command, text_estado, text_boton = ("M1_OFF", "Cerrado", "Abrir Techo") if estado_techo_abierto else ("M1_ON", "Abierto", "Cerrar Techo")
+        command, text_estado, text_boton = ("M1_ON", "Cerrado", "Abrir Techo") if estado_techo_abierto else ("M1_OFF", "Abierto", "Cerrar Techo")
         pico_client.send_command(command)
         etiqueta_estado_techo.config(text=text_estado)
         boton_abrir_cerrar_techo.config(text=text_boton)
@@ -145,7 +145,7 @@ def ventana_principal():
 
     def alternar_ventilador():
         nonlocal estado_ventilador_encendido
-        command, text_estado, text_boton = ("M2_ON", "Apagado", "Encender") if estado_ventilador_encendido else ("M2_OFF", "Encendido", "Apagar")
+        command, text_estado, text_boton = ("M2_OFF", "Apagado", "Encender") if estado_ventilador_encendido else ("M2_ON", "Encendido", "Apagar")
         pico_client.send_command(command)
         etiqueta_estado_ventilador.config(text=text_estado)
         boton_encendido_apagado_manual_ventilador.config(text=text_boton)
@@ -182,7 +182,7 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
-        #serial_control.cerrar()
+        serial_control.cerrar()
         pico_client.disconnect()
         detener_ciclos()
         ventana.destroy()
