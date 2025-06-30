@@ -9,6 +9,40 @@ from Controler import PicoTCPClient, Control
 import Config
 from CamaraWeb import abrir_camara
 from Interfaz_Ticket_Conectado import ventana_tickets
+import json
+import os
+from tkinter import messagebox
+
+class SensorData:
+    def __init__(self, folder, nombre_del_archivo):
+        self.file_path = os.path.join(folder, nombre_del_archivo)
+
+    def read_last_line(self):
+        """
+        Lee la última línea del archivo JSON, la interpreta como un diccionario y devuelve la fecha y el valor de interés
+        según el tipo de sensor.
+        """
+        try:
+            with open(self.file_path, "r", encoding="utf-8") as archivo:
+                lineas = archivo.readlines()
+                if not lineas:
+                    return None, None
+                linea = lineas[-1].strip()
+                data = json.loads(linea)
+
+                tipo = data.get('type')
+
+                if tipo == "DHT_DATA":
+                    return data['timestamp'], data['temperatura_c']
+                elif tipo == "SOIL_MOISTURE_DATA":
+                    return data['timestamp'], data['estado_suelo']
+                elif tipo == "WATER_LEVEL_DATA":
+                    return data['timestamp'], data['nivel_agua']
+                elif tipo == "Fotocelda_Sensor":
+                    return data['timestamp'], data['iluminacion']
+        except Exception as e:
+            print(f"Error leyendo {self.file_path}: {e}")
+            return None, None
 
 def ventana_principal():
     # --- Paleta de Colores y Fuentes ---
@@ -37,7 +71,7 @@ def ventana_principal():
     sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
 
     # Conexión con Controladores
-    serial_control = Control('COM3')
+    #serial_control = Control('COM3')
     pico_host = '192.168.4.1'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -149,7 +183,7 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
-        serial_control.cerrar()
+        #serial_control.cerrar()
         pico_client.disconnect()
         detener_ciclos()
         ventana.destroy()
@@ -157,41 +191,61 @@ def ventana_principal():
     def verificar_y_notificar_datos():
         nonlocal ultimo_ts_temp, ultimo_ts_hum, ultimo_ts_agua, ultimo_ts_luz
         try:
-            ts_temp, valor_temp = sensor_temp.read_line()
+            ts_temp, valor_temp = sensor_temp.read_last_line()
             temp_c = float(valor_temp)
             if ts_temp != ultimo_ts_temp:
-                if temp_c < 15: messagebox.showwarning("Temperatura baja", f"La temperatura es muy baja: {temp_c} °C")
-                elif temp_c > 35: messagebox.showwarning("Temperatura alta", f"La temperatura es muy alta: {temp_c} °C")
+                if temp_c < 15:
+                    messagebox.showwarning("Temperatura baja", f"La temperatura es muy baja: {temp_c} °C")
+                elif temp_c > 35:
+                    messagebox.showwarning("Temperatura alta", f"La temperatura es muy alta: {temp_c} °C")
                 ultimo_ts_temp = ts_temp
         except Exception as e:
             print(f"Error leyendo temperatura: {e}")
-        
+
         try:
-            ts_hum, estado_suelo = sensor_hum.read_line()
+            ts_hum, estado_suelo = sensor_hum.read_last_line()
             if ts_hum != ultimo_ts_hum:
-                if "Seco" in estado_suelo: messagebox.showwarning("Humedad baja", "El suelo está seco. Requiere riego.")
+                if "Seco" in estado_suelo:
+                    messagebox.showwarning("Humedad baja", "El suelo está seco. Requiere riego.")
                 ultimo_ts_hum = ts_hum
         except Exception as e:
             print(f"Error leyendo humedad: {e}")
 
+        try:
+            ts_agua, estado_agua = sensor_agua.read_last_line()
+            if ts_agua != ultimo_ts_agua:
+                if "Vacío" in estado_agua or "vacío" in estado_agua:
+                    messagebox.showwarning("Nivel de agua", "El tanque de agua está vacío.")
+                ultimo_ts_agua = ts_agua
+        except Exception as e:
+            print(f"Error leyendo nivel de agua: {e}")
+
+        try:
+            ts_luz, estado_luz = sensor_luz.read_last_line()
+            if ts_luz != ultimo_ts_luz:
+                # Puedes agregar notificaciones para luz si lo deseas
+                ultimo_ts_luz = ts_luz
+        except Exception as e:
+            print(f"Error leyendo nivel de luz: {e}")
+
     def actualizar_datos():
         try:
-            _, temp = sensor_temp.read_line()
+            _, temp = sensor_temp.read_last_line()
             etiqueta_valor_temperatura.config(text=f"{temp}°C")
         except:
             etiqueta_valor_temperatura.config(text="-- °C")
         try:
-            _, humedad = sensor_hum.read_line()
+            _, humedad = sensor_hum.read_last_line()
             etiqueta_valor_humedad.config(text=f"{humedad}")
         except:
             etiqueta_valor_humedad.config(text="--")
         try:
-            _, nivel_agua = sensor_agua.read_line()
+            _, nivel_agua = sensor_agua.read_last_line()
             etiqueta_valor_agua.config(text=f"{nivel_agua}")
         except:
             etiqueta_valor_agua.config(text="--")
         try:
-            _, iluminacion = sensor_luz.read_line()
+            _, iluminacion = sensor_luz.read_last_line()
             etiqueta_valor_luz.config(text=f"{iluminacion}")
         except:
             etiqueta_valor_luz.config(text="--")

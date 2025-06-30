@@ -396,4 +396,4 @@
 {"type": "WATER_LEVEL_DATA", "timestamp": "2025-06-26 19:26:39", "sensor_name": "Nivel_Agua_Tanque_Principal", "distancia_cm": 16.4, "nivel_agua": "Medio"}
 {"type": "WATER_LEVEL_DATA", "timestamp": "2025-06-26 19:26:44", "sensor_name": "Nivel_Agua_Tanque_Principal", "distancia_cm": 17.5, "nivel_agua": "Medio"}
 {"type": "WATER_LEVEL_DATA", "timestamp": "2025-06-26 19:26:50", "sensor_name": "Nivel_Agua_Tanque_Principal", "distancia_cm": 16.4, "nivel_agua": "Medio"}
-{"type": "WATER_LEVEL_DATA", "timestamp": "2025-06-26 19:26:55", "sensor_name": "Nivel_Agua_Tanque_Principal", "distancia_cm": 16.3, "nivel_agua": "Medio"}
+{"type": "WATER_LEVEL_DATA", "timestamp": "2025-06-26 19:26:55", "sensor_name": "Nivel_Agua_Tanque_Principal", "distancia_cm": 16.3, "nivel_agua": "Vacio"}

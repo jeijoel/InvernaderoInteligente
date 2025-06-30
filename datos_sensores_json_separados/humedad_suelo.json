@@ -391,4 +391,4 @@
 {"type": "SOIL_MOISTURE_DATA", "timestamp": "2025-06-26 19:26:39", "sensor_name": "Humedad_Planta_A", "estado_suelo": "Seco | Encendiendo Bomba"}
 {"type": "SOIL_MOISTURE_DATA", "timestamp": "2025-06-26 19:26:44", "sensor_name": "Humedad_Planta_A", "estado_suelo": "Seco | Encendiendo Bomba"}
 {"type": "SOIL_MOISTURE_DATA", "timestamp": "2025-06-26 19:26:50", "sensor_name": "Humedad_Planta_A", "estado_suelo": "Seco | Encendiendo Bomba"}
-{"type": "SOIL_MOISTURE_DATA", "timestamp": "2025-06-26 19:26:55", "sensor_name": "Humedad_Planta_A", "estado_suelo": "Seco | Encendiendo Bomba"}
+{"type": "SOIL_MOISTURE_DATA", "timestamp": "2025-06-26 19:26:55", "sensor_name": "Humedad_Planta_A", "estado_suelo": "Mojado | Apagando Bomba"}

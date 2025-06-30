@@ -24,7 +24,7 @@ def ventana_principal():
     sensor_agua = SensorData("datos_sensores_json_separados", "nivel_agua.json")
     sensor_luz = SensorData("datos_sensores_json_separados", "fotocelda.json")
 
-    serial_control = Control('COM3')
+    #serial_control = Control('COM3')
     pico_host = '172.20.10.2'
     pico_port = 1234
     pico_client = PicoTCPClient(pico_host, pico_port)
@@ -145,7 +145,7 @@ def ventana_principal():
         ejecucion_activa_ventilador = False
 
     def on_closing():
-        serial_control.cerrar()
+        #serial_control.cerrar()
         detener_ciclo()
         ventana_principal.destroy()
 
