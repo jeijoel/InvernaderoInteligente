@@ -11,7 +11,6 @@ from CamaraWeb import abrir_camara
 from Interfaz_Ticket_Conectado import ventana_tickets
 import json
 import os
-from tkinter import messagebox
 
 class SensorData:
     def __init__(self, folder, nombre_del_archivo):
@@ -223,7 +222,8 @@ def ventana_principal():
         try:
             ts_luz, estado_luz = sensor_luz.read_last_line()
             if ts_luz != ultimo_ts_luz:
-                # Puedes agregar notificaciones para luz si lo deseas
+                if "oscuro" in estado_luz.lower():
+                    messagebox.showwarning("Iluminación baja", "Está oscuro en el invernadero.")
                 ultimo_ts_luz = ts_luz
         except Exception as e:
             print(f"Error leyendo nivel de luz: {e}")
@@ -249,6 +249,7 @@ def ventana_principal():
             etiqueta_valor_luz.config(text=f"{iluminacion}")
         except:
             etiqueta_valor_luz.config(text="--")
+        verificar_y_notificar_datos()
 
     def guardar_intervalos():
         pico_client.send_command(f"SET_INTERVAL_DATA:{intervalo_datos}")

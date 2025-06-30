@@ -278,3 +278,4 @@
 {"type": "DHT_DATA", "timestamp": "2025-06-26 19:26:29", "sensor_name": "Invernadero_DHT11", "temperatura_c": "21"}
 {"type": "DHT_DATA", "timestamp": "2025-06-26 19:26:39", "sensor_name": "Invernadero_DHT11", "temperatura_c": "21"}
 {"type": "DHT_DATA", "timestamp": "2025-06-26 19:26:55", "sensor_name": "Invernadero_DHT11", "temperatura_c": "40"}
+{"type": "DHT_DATA", "timestamp": "2025-06-23 14:50:00", "sensor_name": "Invernadero_DHT11", "temperatura_c": "21"}

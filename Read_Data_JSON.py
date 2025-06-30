@@ -8,17 +8,17 @@ class SensorData:
 
     def read_line(self):
         with open(self.file_path, "r", encoding="utf-8") as archivo:
-            linea = archivo.readline().strip() # espacios 
+            linea = archivo.readline().strip()
             data = json.loads(linea)
-            
+
             if data['type'] == "DHT_DATA":
-                return data['timestamp'], data['temperatura_c'] #------> aca yo solo le puse que me diera la fecha y el dato del sensor poero se puede retornar otro valor de alguna clave del json
+                return data['timestamp'], data['temperatura_c']
             elif data['type'] == "SOIL_MOISTURE_DATA":
                 return data['timestamp'], data['estado_suelo']
             elif data['type'] == "WATER_LEVEL_DATA":
                 return data['timestamp'], data['nivel_agua']
-            
-
+            elif data['type'] == "Fotocelda_Sensor":
+                return data['timestamp'], data['iluminacion']
 
 
 # instancias
